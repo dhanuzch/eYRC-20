@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pkg_task0</name>
+  <version>0.0.0</version>
+  <description>pkg_task0 for eyantra robotic competition</description>
+  <maintainer email="dhanush.mc18@bitsathy.ac.in">dhanuzch</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <exec_depend>rospy</exec_depend>
+  <export>
+  </export>
+</package>
