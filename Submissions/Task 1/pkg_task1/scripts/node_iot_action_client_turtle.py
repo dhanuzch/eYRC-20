@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-""" by @dhanuzch - ROS Node - Simple Action Client - Turtle and Action client Iot
+""" ROS Node - Simple Action Client - Turtle and Action client Iot
 This code can send goals(Distance and angle) to Turtle server and to ros_iot_bridge"""
-import time
 import rospy
 import actionlib
 
@@ -28,6 +27,7 @@ class IotRosBridgeActionClient:
         # Store the MQTT Topic on which to Publish in a variable
         param_config_iot = rospy.get_param('config_iot')
         self._config_mqtt_pub_topic = param_config_iot['mqtt']['topic_pub']
+        self._config_http_pub_topic = "eyrc/UaHaYix/ros_to_iot"
 
         # Wait for Action Server that will use the action - '/action_iot_ros' to start
         self._ac.wait_for_server()
@@ -114,59 +114,62 @@ class SimpleActionClientTurtle:
         """Function to print feedback while Goal is being processed"""
         rospy.loginfo(feedback)
 
-def callback_iotval(msg):
-    """Turtle result is obtained and sent as a goal to node_action_server_ros_iot_bridge"""
-    action_client = IotRosBridgeActionClient()
-
-    value = msg.result
-    x_res = value.final_x
-    y_res = value.final_y
-    theta = value.final_theta
-    finaltuple = str((x_res, y_res, theta))
-    sheetmsgdict = {"turtle_x":x_res, "turtle_y":y_res, "turtle_theta":theta}
-    sheetmsg = str(sheetmsgdict)
-
-    goal_handle1 = action_client.send_goal("http", "pub",
-                                           action_client._config_mqtt_pub_topic, sheetmsg)
-    action_client._goal_handles['1'] = goal_handle1
-    goal_handle2 = action_client.send_goal("mqtt", "pub",
-                                           action_client._config_mqtt_pub_topic, finaltuple)
-    action_client._goal_handles['2'] = goal_handle2
-
-
-def callback_mqttmsg(data):
-    """"starts to send goal to node_simple_action_server_turtle,
-    when 'start' is recieved from mqttbroker"""
-    obj_client = SimpleActionClientTurtle()
-    hexmsg = data.message
-
-    if hexmsg == 'start':
-        # Send Goals to Draw a Hexagon
-        obj_client.send_goal(2, 0)
-        rospy.sleep(10)
-
-        obj_client.send_goal(2, 60)
-        rospy.sleep(10)
-
-        obj_client.send_goal(2, 60)
-        rospy.sleep(10)
-
-        obj_client.send_goal(2, 60)
-        rospy.sleep(10)
-
-        obj_client.send_goal(2, 60)
-        rospy.sleep(10)
-
-        obj_client.send_goal(2, 60)
-
 def main():
     """Main function"""
     # Initialize ROS Node
     rospy.init_node('node_iot_action_client_turtle')
-    rospy.Subscriber("/ros_iot_bridge/mqtt/sub", msgMqttSub, callback_mqttmsg)
-    rospy.Subscriber("/action_turtle/result", msgTurtleActionResult, callback_iotval)
+    def callback_iotval(msg):
+        """used by subscriber to get values"""
+        action_client = IotRosBridgeActionClient()
+
+        value = msg.result
+        x_res = value.final_x
+        y_res = value.final_y
+        theta = value.final_theta
+        finaltuple = str((x_res, y_res, theta))
+        sheetmsgdict = {"turtle_x":x_res, "turtle_y":y_res, "turtle_theta":theta}
+        sheetmsg = str(sheetmsgdict)
+
+        goal_handle1 = action_client.send_goal("http", "pub",
+                                               action_client._config_http_pub_topic, sheetmsg)
+        action_client._goal_handles['2'] = goal_handle1
+        rospy.loginfo("Sent HTTP goal from client")
+
+        goal_handle2 = action_client.send_goal("mqtt", "pub",
+                                               action_client._config_mqtt_pub_topic, finaltuple)
+        action_client._goal_handles['1'] = goal_handle2
+        rospy.loginfo("Sent MQTT goal from client")
+
+    def callback_mqttmsg(data):
+        """"starts to send goal to node_simple_action_server_turtle,
+        when 'start' is recieved from mqttbroker"""
+        obj_client = SimpleActionClientTurtle()
+        hexmsg = data.message
+
+        if hexmsg == 'start':
+            # Send Goals to Draw a Hexagon
+            rospy.sleep(1)
+            obj_client.send_goal(2, 0)
+            rospy.sleep(7)
+
+            obj_client.send_goal(2, 60)
+            rospy.sleep(7)
+
+            obj_client.send_goal(2, 60)
+            rospy.sleep(7)
+
+            obj_client.send_goal(2, 60)
+            rospy.sleep(7)
+
+            obj_client.send_goal(2, 60)
+            rospy.sleep(7)
+
+            obj_client.send_goal(2, 60)
+
     # rospy.sleep(1.0)
     # goal_handle1.cancel()
+    rospy.Subscriber("/ros_iot_bridge/mqtt/sub", msgMqttSub, callback_mqttmsg)
+    rospy.Subscriber("/action_turtle/result", msgTurtleActionResult, callback_iotval)
 
     # Loop forever
     rospy.spin()

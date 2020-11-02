@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 """ROS Node - Simple Action Server - Turtle"""
-import time
 import math
 import rospy
 import actionlib
@@ -9,11 +8,9 @@ from geometry_msgs.msg import Twist
 
 from turtlesim.msg import Pose
 
-
 from pkg_task1.msg import msgTurtleAction     # Message Class that is used by ROS Actions internally
 from pkg_task1.msg import msgTurtleResult     # Message Class that is used for Result messages
 from pkg_task1.msg import msgTurtleFeedback   # Message Class that is used for Feedback messages
-from pkg_task1.msg import msgTurtleGoal   # Message Class that is used for Goal messages
 
 
 class SimpleActionServerTurtle:

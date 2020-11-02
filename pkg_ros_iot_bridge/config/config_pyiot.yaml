@@ -7,9 +7,6 @@ config_iot:
     topic_sub: "eyrc/UaHaYix/iot_to_ros"          
     topic_pub: "eyrc/UaHaYix/ros_to_iot"          
     qos: 0
-
     sub_cb_ros_topic: "/ros_iot_bridge/mqtt/sub"   # ROS nodes can listen to this topic to receive data from MQTT
-
   google_apps:
-    spread_sheet_id: "AKfycbwLLWDATM1YCV4YYrlVhuEF2j2ZEmXqoOujdpzQwZ0r8uvFCEEx"
-
+    spread_sheet_id: "AKfycbzHbZ229Ab0TA91vdOiUQwJuc_BtBjTHg6_qK7xtLwey3iT6O7P"

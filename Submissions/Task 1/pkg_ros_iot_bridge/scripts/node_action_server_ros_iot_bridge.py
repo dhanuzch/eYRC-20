@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-"""ROS Node - Action Server - IoT ROS Bridge by @dhanuzch"""
+"""ROS Node - Action Server - IoT ROS Bridge"""
 import threading
-import requests
 import rospy
 import actionlib
 
 from pkg_ros_iot_bridge.msg import msgRosIotAction      # Message that is used by ROS Actions
-from pkg_ros_iot_bridge.msg import msgRosIotGoal        # Message that is used for Goal Messages
-from pkg_ros_iot_bridge.msg import msgRosIotFeedback    # Message that is used for Feedback Msgs
 from pkg_ros_iot_bridge.msg import msgRosIotResult      # Message that is used for Result Messages
 from pkg_ros_iot_bridge.msg import msgMqttSub           # Message for MQTT Subscription Messages
 
@@ -41,6 +38,7 @@ class IotRosBridgeActionServer:
         self._config_mqtt_pub_topic = param_config_iot['mqtt']['topic_pub']
         self._config_mqtt_qos = param_config_iot['mqtt']['qos']
         self._config_mqtt_sub_cb_ros_topic = param_config_iot['mqtt']['sub_cb_ros_topic']
+        self._config_spreadsheet_id = param_config_iot['google_apps']['spread_sheet_id']
         print param_config_iot
 
 
@@ -53,16 +51,16 @@ class IotRosBridgeActionServer:
 
         # Sub to MQTT Topic (eyrc/xYzqLm/iot_to_ros) which is defined in 'config_iot_ros.yaml'
         # self.mqtt_sub_callback() function will be called when there is a msg from MQTT Sub
-        ret = iot.mqtt_subscribe_thread_start(self.mqtt_sub_callback,
-                                              self._config_mqtt_server_url,
-                                              self._config_mqtt_server_port,
-                                              self._config_mqtt_sub_topic,
-                                              self._config_mqtt_qos)
-        if ret == 0:
-            rospy.loginfo("MQTT Subscribe Thread Started")
-        else:
-            rospy.logerr("Failed to start MQTT Subscribe Thread")
+        ret1 = iot.mqtt_subscribe_thread_start(self.mqtt_sub_callback,
+                                               self._config_mqtt_server_url,
+                                               self._config_mqtt_server_port,
+                                               self._config_mqtt_sub_topic,
+                                               self._config_mqtt_qos)
 
+        if ret1 == 0:
+            rospy.loginfo("MQTT Subscribe Thread Started")
+        elif ret1 == 1:
+            rospy.logerr("Failed to start MQTT Subscribe Thread")
 
         # Start the Action Server
         self._as.start()
@@ -88,7 +86,7 @@ class IotRosBridgeActionServer:
         rospy.loginfo(goal)
 
         # Validate incoming goal parameters
-        if (goal.protocol == "mqtt") or (goal.protocol == "http"):
+        if goal.protocol == "mqtt":
 
             if (goal.mode == "pub") or (goal.mode == "sub"):
                 goal_handle.set_accepted()
@@ -101,6 +99,19 @@ class IotRosBridgeActionServer:
                                           args=(goal_handle,))
                 thread.start()
 
+            else:
+                goal_handle.set_rejected()
+                return
+
+        elif goal.protocol == "http":
+
+            if (goal.mode == "pub") or (goal.mode == "sub"):
+                goal_handle.set_accepted()
+
+                thread1 = threading.Thread(name="worker1",
+                                           target=self.process_goal,
+                                           args=(goal_handle,))
+                thread1.start()
 
             else:
                 goal_handle.set_rejected()
@@ -166,43 +177,13 @@ class IotRosBridgeActionServer:
 
                 rospy.logwarn(goal.topic + " > " + goal.message)
 
+                ret = iot.http_publish(goal.message)
 
-                p1dict = eval(goal.message)
-                x_res = p1dict['turtle_x']
-                y_res = p1dict['turtle_y']
-                theta = p1dict['turtle_theta']
-
-                parameters1 = {"id":"Sheet1", "turtle_x":x_res,
-                               "turtle_y":y_res, "turtle_theta":theta}
-                parameters2 = {"id":"task1", "team_id":"VB_2113", "unique_id":"UaHaYix",
-                               "turtle_x":x_res, "turtle_y":y_res, "turtle_theta":theta}
-                url1 = "https://script.google.com/macros/s/AKfycbzHbZ229Ab0TA91vdOiUQwJuc_BtBjTHg6_qK7xtLwey3iT6O7P/exec"
-                url2 = "https://script.google.com/macros/s/AKfycbw850dk4moVgebU2GGe0PUQUvvg8jTpSjBQCawJt3_13vgujLk/exec"
-
-                ret1 = requests.get(url1, params=parameters1)
-                ret2 = requests.get(url2, params=parameters2)
-
-                if (ret1.content == 'success') and (ret2.content == 'success'):
+                if ret == 'success':
                     rospy.loginfo("HTTP Publish Successful.")
                     result.flag_success = True
                 else:
                     rospy.logerr("HTTP Failed to Publish")
-                    result.flag_success = False
-
-            elif goal.mode == "sub":
-                rospy.logwarn("HTTP SUB Goal ID: " + str(goal_id.id))
-                rospy.logwarn(goal.topic)
-
-                ret = iot.mqtt_subscribe_thread_start(self.mqtt_sub_callback,
-                                                      self._config_mqtt_server_url,
-                                                      self._config_mqtt_server_port,
-                                                      goal.topic,
-                                                      self._config_mqtt_qos)
-                if ret == 0:
-                    rospy.loginfo("HTTP Subscribe Thread Started")
-                    result.flag_success = True
-                else:
-                    rospy.logerr("Failed to start HTTP Subscribe Thread")
                     result.flag_success = False
 
 
