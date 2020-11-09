@@ -36,9 +36,8 @@ def circle():
         while ANGLE >= 359.2:
             print "Reached @", ANGLE
             vel_msg.linear.x = 0
-            vel_msg.angular.z = 0
+            vel_msg.angular.z = 1.5
             pub.publish(vel_msg)
-            rospy.sleep(1)
             rospy.spin()
             break
 
@@ -47,4 +46,3 @@ if __name__ == '__main__':
         circle()
     except rospy.ROSInterruptException:
         pass
-    
