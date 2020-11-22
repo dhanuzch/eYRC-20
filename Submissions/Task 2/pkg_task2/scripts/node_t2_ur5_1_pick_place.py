@@ -103,12 +103,12 @@ class Ur5Moveit:
 
         box_pose = geometry_msgs.msg.PoseStamped()
         box_pose.header.frame_id = self._planning_frame
-        box_pose.pose.position.x = 0.04
+        box_pose.pose.position.x = 0.01
         box_pose.pose.position.y = 0.47
-        box_pose.pose.position.z = 1.85   
+        box_pose.pose.position.z = 1.90   
      
         scene.add_box(box_name, box_pose, size=(0.15, 0.15, 0.15))
-        self._box_name=box_name #try removing this TODOTODOTODOTODOTODOTODOTODOTODOTODO
+        self._box_name=box_name
         return self.wait_for_state_update(box_is_known=True, timeout=timeout)
 
     def attach_box(self, timeout=1):
