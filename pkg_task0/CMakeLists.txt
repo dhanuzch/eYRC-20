@@ -9,6 +9,7 @@ project(pkg_task0)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -68,7 +69,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
+#   std_msgs
 # )
 
 ################################################
@@ -103,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pkg_task0
-#  CATKIN_DEPENDS rospy
+#  CATKIN_DEPENDS rospy std_msgs
 #  DEPENDS system_lib
 )
 

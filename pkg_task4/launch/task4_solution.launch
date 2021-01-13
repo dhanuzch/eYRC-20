@@ -1,0 +1,32 @@
+<launch>
+  
+<!-- Launch Task-3 Simulation Environment in Gazebo -->
+<include file="$(find pkg_vb_sim)/launch/task4_simulation.launch" />
+
+<!-- Run Conveyor Belt Service Server -->
+<node name= "node_srv_server_conveyor_belt" pkg= "pkg_vb_sim" type="node_service_server_conveyor_belt.py" output="screen"/>
+
+<!-- Launch Moveit Group Node -->
+<include file="$(find pkg_task4)/launch/two_ur5_move_group.launch" />
+
+<!-- Run RViz with Moveit! Pluging -->
+<arg name="use_rviz" default="true" />
+
+<!-- This node is to start task3 node 
+<node name= "eyantra_task3" pkg= "pkg_task3" type="node_task3.py" output="screen" required = "true"/> -->
+
+<!-- To add a delay to start the node -->
+<arg name="node_start_delay" default="15.0" />  
+
+<!-- This node is to start task3_conveyor node which controls conveyor and sends logical camera's output 
+<node name= "conveyor_control" pkg= "pkg_task3" type="node_task3_conveyor.py" output="screen" required = "true" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/> -->
+
+<!-- Recording Bag File for Submission -->
+    <arg name="record" default="false"/>
+    <arg name="rec_name" default="t3.bag"/>
+
+    <group if="$(arg record)">
+        <node name="rosbag_record_pick" pkg="rosbag" type="record"
+       args="record -O $(find pkg_task3)/bag_files/$(arg rec_name) --chunksize=10 /eyrc/vb/ur5_1/vacuum_gripper/logical_camera/ur5_1" output="screen"/>
+ </group>
+</launch>

@@ -1,0 +1,8 @@
+    <arg name="record" default="true"/>
+    <arg name="rec_name" default="turtle_record.bag"/>
+    <group if="$(arg record)">
+
+        <node name="rosbag_record_turtle" pkg="rosbag" type="record"
+        args="record -O $(find pkg_task1)/bag_files/$(arg rec_name) --chunksize=10  /action_turtle/goal /action_turtle/result /action_ros_iot/goal /ros_iot_bridge/mqtt/sub /turtle1/cmd_vel /turtle1/pose" output="screen"/>
+
+    </group>

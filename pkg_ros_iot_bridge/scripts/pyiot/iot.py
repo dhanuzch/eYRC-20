@@ -69,14 +69,13 @@ def http_publish(arg_http_message):
     parameters1 = {"id":"Sheet1", "turtle_x":x_res,
                    "turtle_y":y_res, "turtle_theta":theta}
     url1 = "https://script.google.com/macros/s/AKfycbzHbZ229Ab0TA91vdOiUQwJuc_BtBjTHg6_qK7xtLwey3iT6O7P/exec"
-    parameters2 = {"id":"task1", "team_id":"VB_2113", "unique_id":"UaHaYix",
-                   "turtle_x":x_res, "turtle_y":y_res, "turtle_theta":theta}
-    url2 = "https://script.google.com/macros/s/AKfycbw850dk4moVgebU2GGe0PUQUvvg8jTpSjBQCawJt3_13vgujLk/exec"
+    #parameters2 = {"id":"task1", "team_id":"VB_2113", "unique_id":"UaHaYix",
+                   #"turtle_x":x_res, "turtle_y":y_res, "turtle_theta":theta}
+    #url2 = "https://script.google.com/macros/s/AKfycbw850dk4moVgebU2GGe0PUQUvvg8jTpSjBQCawJt3_13vgujLk/exec"
     try:
         ret1 = requests.get(url1, params=parameters1)
-        ret2 = requests.get(url2, params=parameters2)
-        ret = ret1.content and ret2.content
-
+        #ret2 = requests.get(url2, params=parameters2)
+        ret = ret1.content
         return ret
     except:
         return -1

@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-#used this
 import rospy
 import sys
 import copy
@@ -98,7 +97,7 @@ class manipulation:
         self._vacuum_gripper_model_name = param_config_vacuum_gripper['vacuum_gripper_model_name']
         self._vacuum_gripper_link_name = param_config_vacuum_gripper['vacuum_gripper_link_name']
         
-        self._object_model_name = ""
+        #self._object_model_name = ""
         self._object_link_name = param_config_vacuum_gripper['attachable_object_link_name']
         
         self._attachable_object_prefix = param_config_vacuum_gripper['attachable_object_prefix']
@@ -109,7 +108,6 @@ class manipulation:
         self._listener = tf2_ros.TransformListener(self._tfBuffer)
 
         self.pkg_id = ""
-
     def func_tf(self, arg_frame_1, arg_frame_2):
         try:
             trans = self._tfBuffer.lookup_transform(arg_frame_1, arg_frame_2, rospy.Time())
@@ -156,8 +154,9 @@ class manipulation:
     def arm_signal(self, status):
         #TODO: add status.data and proceed signal from ee_move == false
         if status.data == True:
-            
             self.ee_move()
+        if status.data == False:
+            print "nothing is happening lol"
 
     def ur5_camera_clbk(self, pkg_type):
         number_models = len(pkg_type.models)
@@ -173,15 +172,15 @@ class manipulation:
                 break
 
     def ee_move(self):
-        box_model_name = self._object_model_name
-
         camera_name = "logical_camera_2_"
         suffix = "_frame"
 
+        
         target_frame = camera_name+self.pkg_id+suffix
         print target_frame
         reference_frame = "world"
 
+        flag_plan = ur5._group.go(wait=False)
 
         #TODO: fix the starting delay of the arm
         #TODO: fix arm's activation and deactivation problem and reduce time
@@ -206,6 +205,27 @@ class manipulation:
         pkg_pose.orientation.w = 0.5
 
         #TODO: make sure only after one is complete go to next
+        """
+        if target_frame != "logical_camera_2__frame":
+            while flag_plan == True:
+                ur5.go_to_pose(pkg_pose)
+                self.attach_box()
+                if self._object_model_name >= 1:
+                    self.to_bin(self.pkg_id)
+                    self.detach_box()
+            while flag_plan == False:
+                break
+                
+        if target_frame != "logical_camera_2__frame":
+            ur5.go_to_pose(pkg_pose)
+            self.attach_box()
+            while len(self._object_model_name) >=1:
+                self.to_bin(self.pkg_id)
+                self.detach_box()
+                break
+            while len(self._object_model_name) == 0:
+                break
+                """
         if target_frame != "logical_camera_2__frame":
             ur5.go_to_pose(pkg_pose)
             while len(self.pkg_id) >=1:
@@ -214,6 +234,15 @@ class manipulation:
                 self.detach_box()
                 break
 
+    def ee_home(self):
+        home_joint_angles = [math.radians(172.116),
+                    math.radians(8.9209),
+                    math.radians(-53.787),
+                    math.radians(-45.0975),
+                    math.radians(-90),
+                    math.radians(-7.866)]
+
+        ur5.set_joint_angles(home_joint_angles)
 
     def attach_box(self):
         box_model_name = self._object_model_name
