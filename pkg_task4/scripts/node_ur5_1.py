@@ -259,6 +259,11 @@ class Ur5Moveit:
             
         return self.wait_for_state_update(box_is_known=True, box_is_attached=False)
 
+    def remove_box(self, box_name):
+        scene = self._scene
+        scene.remove_world_object(box_name)
+        return self.wait_for_state_update(box_is_attached=False, box_is_known=False)
+
     # Destructor
 
     def __del__(self):
@@ -283,6 +288,7 @@ def main():
         rospy.logwarn("2")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '2_00co.yaml', 5)
         ur5.detach_box(box_name00)
+        ur5.remove_box(box_name00)
 
 
         rospy.logwarn("3")
@@ -294,6 +300,7 @@ def main():
         rospy.logwarn("4")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '4_01co.yaml', 5)
         ur5.detach_box(box_name01)
+        ur5.remove_box(box_name01)
 
 
         rospy.logwarn("5")
@@ -305,6 +312,7 @@ def main():
         rospy.logwarn("6")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '6_02co.yaml', 5)
         ur5.detach_box(box_name02)
+        ur5.remove_box(box_name02)
 
 
         rospy.logwarn("7")
@@ -316,6 +324,7 @@ def main():
         rospy.logwarn("8")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '8_10co.yaml', 5)
         ur5.detach_box(box_name10)
+        ur5.remove_box(box_name10)
 
 
         rospy.logwarn("9")
@@ -327,6 +336,7 @@ def main():
         rospy.logwarn("10")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '10_11co.yaml', 5)
         ur5.detach_box(box_name11)
+        ur5.remove_box(box_name11)
 
 
         rospy.logwarn("11")
@@ -338,6 +348,7 @@ def main():
         rospy.logwarn("12")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '12_12co.yaml', 5)
         ur5.detach_box(box_name12)
+        ur5.remove_box(box_name12)
 
 
         rospy.logwarn("13")
@@ -349,6 +360,7 @@ def main():
         rospy.logwarn("14")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '14_20co.yaml', 5)
         ur5.detach_box(box_name20)
+        ur5.remove_box(box_name20)
 
 
         rospy.logwarn("15")
@@ -360,6 +372,7 @@ def main():
         rospy.logwarn("16")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '16_21co.yaml', 5)
         ur5.detach_box(box_name21)
+        ur5.remove_box(box_name21)
 
 
         rospy.logwarn("17")
@@ -371,6 +384,7 @@ def main():
         rospy.logwarn("18")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '18_22co.yaml', 5)
         ur5.detach_box(box_name22)
+        ur5.remove_box(box_name22)
 
 
         rospy.logwarn("19")
@@ -382,6 +396,7 @@ def main():
         rospy.logwarn("20")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '20_30co.yaml', 5)
         ur5.detach_box(box_name30)
+        ur5.remove_box(box_name30)
 
 
         rospy.logwarn("21")
@@ -393,6 +408,7 @@ def main():
         rospy.logwarn("22")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '22_31co.yaml', 5)
         ur5.detach_box(box_name31)
+        ur5.remove_box(box_name31)
 
 
         rospy.logwarn("23")
@@ -404,6 +420,7 @@ def main():
         rospy.logwarn("24")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '24_32co.yaml', 5)
         ur5.detach_box(box_name32)
+        ur5.remove_box(box_name32)
 
 
     del ur5

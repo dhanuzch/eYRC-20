@@ -23,7 +23,6 @@ class Ur5Moveit:
     # Constructor
     def __init__(self, arg_robot_name):
 
-        rospy.init_node('node_moveit_eg6', anonymous=True)
 
         self._robot_ns = '/'  + arg_robot_name
         self._planning_group = "manipulator"
@@ -35,7 +34,8 @@ class Ur5Moveit:
         self._display_trajectory_publisher = rospy.Publisher( self._robot_ns + '/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=1)
         self._exectute_trajectory_client = actionlib.SimpleActionClient( self._robot_ns + '/execute_trajectory', moveit_msgs.msg.ExecuteTrajectoryAction)
         self._exectute_trajectory_client.wait_for_server()
-
+        #self._group.setPlannerId("RRTConnectkConfigDefault")
+        #self._group.setPlanningTime(10)
         self._planning_frame = self._group.get_planning_frame()
         self._eef_link = self._group.get_end_effector_link()
         self._group_names = self._robot.get_group_names()
@@ -108,25 +108,25 @@ class Ur5Moveit:
             rospy.logwarn("attempts: {}".format(number_attempts) )
             # self.clear_octomap()
 
-    def wait_for_state_update(self, box_is_known=False, box_is_attached=False):
+    def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
             box_name = self._box_name
             scene = self._scene
 
             start = rospy.get_time()
             seconds = rospy.get_time()
-            while (seconds - start < 0.1) and not rospy.is_shutdown():
-                attached_objects = scene.get_attached_objects([box_name])
-                is_attached = len(attached_objects.keys()) > 0
+            #while (seconds - start < 1) and not rospy.is_shutdown():
+            attached_objects = scene.get_attached_objects([box_name])
+            is_attached = len(attached_objects.keys()) > 0
 
-                is_known = box_name in scene.get_known_object_names()
+            is_known = box_name in scene.get_known_object_names()
 
-                # Test if we are in the expected state
-                if (box_is_attached == is_attached) and (box_is_known == is_known):
-                    return True
+            # Test if we are in the expected state
+            if (box_is_attached == is_attached) and (box_is_known == is_known):
+                return True
 
-                # Sleep so that we give other threads time on the processor
-                rospy.sleep(0.1)
-                seconds = rospy.get_time()
+            # Sleep so that we give other threads time on the processor
+            rospy.sleep(1)
+            seconds = rospy.get_time()
 
             # If we exited the while loop without returning then we timed out
             return False
@@ -134,7 +134,7 @@ class Ur5Moveit:
     def attach_box(self, box_name):
         self._scene.attach_box(self._eef_link, box_name, touch_links='vacuum_gripper_link')
         #request = rospy.ServiceProxy('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1', vacuumGripper)
-        print ("Activating gripper")
+        print ("Activating gripper"), timeout=4
         return self.wait_for_state_update(box_is_attached=True, box_is_known=False)
 
 
@@ -148,29 +148,11 @@ class Ur5Moveit:
 
     def attach_box(self, box_name):
         self._scene.attach_box(self._eef_link, box_name, touch_links='vacuum_gripper_link')
-        rospy.wait_for_service('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1')
-        try:
-            request = rospy.ServiceProxy('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1', vacuumGripper)
-            print ("Activating gripper")
-            eef_req = vacuumGripperRequest(True)
-            return request(eef_req)
-        except rospy.ServiceException:
-            rospy.logerr ("Failed to activate gripper")
-
-        return self.wait_for_state_update(box_is_attached=True, box_is_known=False)
+        return self.wait_for_state_update(box_is_attached=True, box_is_known=True, timeout=4)
 
     def detach_box(self, box_name):
         self._scene.remove_attached_object(self._eef_link, name=box_name)
-        rospy.wait_for_service('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1')
-        try:
-            request = rospy.ServiceProxy('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1', vacuumGripper)
-            print ("***Deactivating gripper***")
-            eef_req = vacuumGripperRequest(False)
-            return request(eef_req)
-        except:
-            return 0
-            
-        return self.wait_for_state_update(box_is_known=True, box_is_attached=False)
+        return self.wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4)
 
     def add_box(self):
         scene = self._scene
@@ -179,32 +161,32 @@ class Ur5Moveit:
         box_pose00.header.frame_id = self._planning_frame
         box_pose00.pose.position.x = 0.28
         box_pose00.pose.position.y = -0.41
-        box_pose00.pose.position.z = 1.90  
+        box_pose00.pose.position.z = 1.92 
         box_pose01 = geometry_msgs.msg.PoseStamped()
         box_pose01.header.frame_id = self._planning_frame
         box_pose01.pose.position.x = 0
         box_pose01.pose.position.y = -0.41
-        box_pose01.pose.position.z = 1.90  
+        box_pose01.pose.position.z = 1.92  
         box_pose02 = geometry_msgs.msg.PoseStamped()
         box_pose02.header.frame_id = self._planning_frame
         box_pose02.pose.position.x = -0.28
         box_pose02.pose.position.y = -0.41
-        box_pose02.pose.position.z = 1.90  
+        box_pose02.pose.position.z = 1.92  
         box_pose10 = geometry_msgs.msg.PoseStamped()
         box_pose10.header.frame_id = self._planning_frame
         box_pose10.pose.position.x = 0.28
         box_pose10.pose.position.y = -0.41
-        box_pose10.pose.position.z = 1.64 
+        box_pose10.pose.position.z = 1.65
         box_pose11 = geometry_msgs.msg.PoseStamped()
         box_pose11.header.frame_id = self._planning_frame
         box_pose11.pose.position.x = 0.0
         box_pose11.pose.position.y = -0.41
-        box_pose11.pose.position.z = 1.64  
+        box_pose11.pose.position.z = 1.65  
         box_pose12 = geometry_msgs.msg.PoseStamped()
         box_pose12.header.frame_id = self._planning_frame
         box_pose12.pose.position.x = -0.28
         box_pose12.pose.position.y = -0.41
-        box_pose12.pose.position.z = 1.64  
+        box_pose12.pose.position.z = 1.65  
         box_pose20 = geometry_msgs.msg.PoseStamped()
         box_pose20.header.frame_id = self._planning_frame
         box_pose20.pose.position.x = 0.28
@@ -214,27 +196,27 @@ class Ur5Moveit:
         box_pose21.header.frame_id = self._planning_frame
         box_pose21.pose.position.x = 0.0
         box_pose21.pose.position.y = -0.41
-        box_pose21.pose.position.z = 1.42  
+        box_pose21.pose.position.z = 1.43 
         box_pose22 = geometry_msgs.msg.PoseStamped()
         box_pose22.header.frame_id = self._planning_frame
         box_pose22.pose.position.x = -0.28
         box_pose22.pose.position.y = -0.41
-        box_pose22.pose.position.z = 1.42 
+        box_pose22.pose.position.z = 1.43
         box_pose30 = geometry_msgs.msg.PoseStamped()
         box_pose30.header.frame_id = self._planning_frame
         box_pose30.pose.position.x = 0.28
         box_pose30.pose.position.y = -0.41
-        box_pose30.pose.position.z = 1.19 
+        box_pose30.pose.position.z = 1.20 
         box_pose31 = geometry_msgs.msg.PoseStamped()
         box_pose31.header.frame_id = self._planning_frame
         box_pose31.pose.position.x = 0.0
         box_pose31.pose.position.y = -0.41
-        box_pose31.pose.position.z = 1.19  
+        box_pose31.pose.position.z = 1.20 
         box_pose32 = geometry_msgs.msg.PoseStamped()
         box_pose32.header.frame_id = self._planning_frame
         box_pose32.pose.position.x = -0.28
         box_pose32.pose.position.y = -0.41
-        box_pose32.pose.position.z = 1.19  
+        box_pose32.pose.position.z = 1.20 
         
      
         scene.add_box("packagen00", box_pose00, size=(0.15, 0.15, 0.15))
@@ -249,8 +231,13 @@ class Ur5Moveit:
         scene.add_box("packagen30", box_pose30, size=(0.15, 0.15, 0.15))
         scene.add_box("packagen31", box_pose31, size=(0.15, 0.15, 0.15))
         scene.add_box("packagen32", box_pose32, size=(0.15, 0.15, 0.15))
-    # Destructor
 
+    def remove_box(self, box_name):
+        scene = self._scene
+        scene.remove_world_object(box_name)
+        return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=4)
+    
+    # Destructor
     def __del__(self):
         moveit_commander.roscpp_shutdown()
         rospy.loginfo(
@@ -258,7 +245,6 @@ class Ur5Moveit:
 
 
 def main():
-
     ur5 = Ur5Moveit(sys.argv[1])
     ur5.add_box()
     
@@ -367,7 +353,6 @@ def main():
                           math.radians(124),
                           math.radians(103)]
 
-
     # 1-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_00, 5)
     ur5.attach_box(box_name00)
@@ -379,10 +364,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 2-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name00)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name00)
 
     file_name = '2_00co.yaml'
     file_path = ur5._file_path + file_name
@@ -391,6 +379,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 3-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_01, 5)
@@ -403,10 +392,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 4-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name01)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name01)
 
     file_name = '4_01co.yaml'
     file_path = ur5._file_path + file_name
@@ -415,6 +407,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 5-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_02, 5)
@@ -427,10 +420,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 6-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name02)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name02)
 
     file_name = '6_02co.yaml'
     file_path = ur5._file_path + file_name
@@ -439,6 +435,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 7-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_10, 5)
@@ -451,10 +448,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 8-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name10)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name10)
 
     file_name = '8_10co.yaml'
     file_path = ur5._file_path + file_name
@@ -463,6 +463,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 9-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_11, 5)
@@ -475,10 +476,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 10-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name11)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name11)
 
     file_name = '10_11co.yaml'
     file_path = ur5._file_path + file_name
@@ -487,6 +491,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 11-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_12, 5)
@@ -499,10 +504,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 12-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name12)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name12)
 
     file_name = '12_12co.yaml'
     file_path = ur5._file_path + file_name
@@ -511,6 +519,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 13-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_20, 5)
@@ -523,10 +532,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 14-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name20)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name20)
 
     file_name = '14_20co.yaml'
     file_path = ur5._file_path + file_name
@@ -535,6 +547,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 15-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_21, 5)
@@ -547,10 +560,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 16-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name21)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name21)
 
     file_name = '16_21co.yaml'
     file_path = ur5._file_path + file_name
@@ -559,6 +575,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 17-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_22, 5)
@@ -571,10 +588,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 18-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name22)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name22)
 
     file_name = '18_22co.yaml'
     file_path = ur5._file_path + file_name
@@ -583,6 +603,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 19-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_30, 5)
@@ -595,10 +616,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 20-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name30)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name30)
 
     file_name = '20_30co.yaml'
     file_path = ur5._file_path + file_name
@@ -607,6 +631,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 21-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_31, 5)
@@ -619,10 +644,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 22-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name31)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name31)
 
     file_name = '22_31co.yaml'
     file_path = ur5._file_path + file_name
@@ -631,6 +659,7 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 23-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_32, 5)
@@ -643,10 +672,13 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
+    rospy.sleep(2)
 
     # 24-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_co, 5)
     ur5.detach_box(box_name32)
+    rospy.sleep(.5)
+    ur5.remove_box(box_name32)
 
     file_name = '24_32co.yaml'
     file_path = ur5._file_path + file_name
@@ -655,14 +687,12 @@ def main():
         yaml.dump(ur5._computed_plan, file_save, default_flow_style=True)
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
-
-
     rospy.sleep(2)
 
     del ur5
 
 
-
 if __name__ == '__main__':
+    rospy.init_node('node_moveit_eg6', anonymous=True)
     main()
 

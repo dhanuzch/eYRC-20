@@ -13,7 +13,7 @@
     </node>
     
     <!-- Add Shelf to Moveit! Planning Scene in RViz -->
-    <arg name="scene_file" default="$(find pkg_task4)/config/rviz/ur5_1_shelf2.scene"/> 
+    <arg name="scene_file" default="$(find pkg_task4)/config/rviz/ur5_1_shelf3.scene"/> 
     <node name = "moveit_publish_scene_from_text" pkg= "moveit_ros_planning" type = "moveit_publish_scene_from_text" args= "$(arg scene_file)"/>
 
     <include file="$(find pkg_moveit_ur5_1)/launch/move_group.launch">
