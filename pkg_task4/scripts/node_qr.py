@@ -12,12 +12,14 @@ from pyzbar.pyzbar import decode
 shelf_id = ""
 iterator_check = False
 pkg_list = []
+
 class Camera1:
 
 	def __init__(self):
 		self.bridge = CvBridge()
 		self.image_sub = rospy.Subscriber("/eyrc/vb/camera_1/image_raw", Image,self.callback)
-	
+
+		rospy.get_param("pkg_details")
 	def callback(self,data):
 		try:
 			cv_image = self.bridge.imgmsg_to_cv2(data, "bgra8")
@@ -38,16 +40,17 @@ class Camera1:
 
 		# decode the obtained qrcode
 		qr_result = decode(img_bw)
+		#print qr_result
 
 		if iterator_check == False:
 			for qrcode in qr_result:
-				self.id_and_priority_calc(qrcode)
+				self.id_and_priority_calc(qrcode, qr_result)
 			cv2.waitKey(3)
 			iterator_check = True
 		
-		self.cv_window_print(qr_result, resized_image)
+		#self.cv_window_print(qr_result, resized_image)
 
-	def id_and_priority_calc(self, qrcode):
+	def id_and_priority_calc(self, qrcode, qr_result):
 		global shelf_id
 		hor_line = qrcode.rect.top
 		vert_line = qrcode.rect.left
@@ -89,9 +92,10 @@ class Camera1:
 		if qrcode.data == "green":
 			priority = 3
 
-		self.list_maker(qrcode, shelf_id, priority)
+		self.list_maker(qrcode, shelf_id, priority, qr_result)
 
-	def list_maker(self, qrcode, shelf_id, priority):
+	def list_maker(self, qrcode, shelf_id, priority, qr_result):
+		global pkg_list
 		pkg_id = "packagen"+shelf_id
 		
 		pkg_dict = {
@@ -101,9 +105,15 @@ class Camera1:
 			"shelf_id": shelf_id
 		}
 
-		#pkg_list = [pkg_dict for k in range(12)]
+		pkg_list.append(pkg_dict)
+		
+		# for task5 fix up this messed up part lmao
+		print len(pkg_list)
 		print (pkg_dict)
-		#print pkg_list
+		if len(pkg_list) == 12:
+			rospy.set_param("/pkg_details", pkg_list)
+			#foo = rospy.get_param("/pkg_details")
+			#print foo
 
 	def cv_window_print(self, qr_result, resized_image):
 		for qrcode in qr_result:
@@ -146,17 +156,12 @@ class Camera1:
 			cv2.imshow("/eyrc/vb/camera_1/image_raw", resized_image)
 		cv2.waitKey(3)
 
-def main(args):
+def main():
 
 	rospy.init_node('node_eg3_qr_decode', anonymous=True)
 	ic = Camera1()
-
-	try:
-		rospy.spin()
-	except KeyboardInterrupt:
-		rospy.loginfo("Shutting down")
-
+	rospy.spin()
 	cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()

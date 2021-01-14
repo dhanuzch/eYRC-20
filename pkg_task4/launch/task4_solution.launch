@@ -3,6 +3,7 @@
 <!-- Launch Task-3 Simulation Environment in Gazebo -->
 <include file="$(find pkg_vb_sim)/launch/task4_simulation.launch" />
 
+<rosparam command="load" file="$(find pkg_task4)/config/pkg_details.yaml" />
 <!-- Run Conveyor Belt Service Server -->
 <node name= "node_srv_server_conveyor_belt" pkg= "pkg_vb_sim" type="node_service_server_conveyor_belt.py" output="screen"/>
 
