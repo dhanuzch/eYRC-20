@@ -129,7 +129,7 @@ class manipulation:
 
     def pkg_name(self, msg):
         pkg_details = rospy.get_param("/pkg_details")
-        next((item for item in pkg_details if item["color"] == "Pam"), None)
+        next((item for item in pkg_details if item["name"] == "Pam"), None)
         #self.pkg_id = msg.data
 
     def wait_for_state_update(self, box_is_known=False, box_is_attached=False):
@@ -155,8 +155,9 @@ class manipulation:
             # If we exited the while loop without returning then we timed out
             return False
 
-    def arm_signal(self, status):
+    def arm_signal(self, msg):
         #TODO: add status.data and proceed signal from ee_move == false
+        print msg
         if status.data == True:
             self.ee_move()
         if status.data == False:
@@ -300,8 +301,11 @@ class manipulation:
 
 def main():
     while not rospy.is_shutdown():
-        rospy.Subscriber("/eyrc/armsignal", Bool, Manipulation.arm_signal)
-        rospy.Subscriber("eyrc/pkgid", String, Manipulation.pkg_name)
+        #TODO: convert these two things to one
+        rospy.Subscriber("/eyrc/conveyor_msg", conveyor, Manipulation.arm_signal)
+
+        #rospy.Subscriber("/eyrc/armsignal", Bool, Manipulation.arm_signal)
+        #rospy.Subscriber("eyrc/pkgid", String, Manipulation.pkg_name)
         rospy.Subscriber("eyrc/vb/ur5_1/vacuum_gripper/logical_camera/ur5_1", LogicalCameraImage, Manipulation.ur5_camera_clbk)
         rospy.spin()    
 

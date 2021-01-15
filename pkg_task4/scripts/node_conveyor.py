@@ -9,8 +9,8 @@ import moveit_msgs.msg
 import geometry_msgs.msg
 import actionlib
 
-from std_msgs.msg import Bool, String
-from pkg_vb_sim.msg import LogicalCameraImage
+from hrwros_gazebo.msg import LogicalCameraImage
+from pkg_task4.msg import conveyor
 
 from pkg_vb_sim.srv import conveyorBeltPowerMsg
 from pkg_vb_sim.srv import conveyorBeltPowerMsgRequest
@@ -27,28 +27,30 @@ def conveyor_control(conveyor_speed):
 
 
 def logical_camera_clbk(msg):
-    statuspub = rospy.Publisher('eyrc/armsignal', Bool, queue_size=1)
-    modelpub = rospy.Publisher('eyrc/pkgid', String, queue_size=1)
-
+    conveyorpub = rospy.Publisher('eyrc/conveyor_msg', conveyor, queue_size=1)
+    conv_msg = conveyor()
 
     #get output from logical_camera_2 {rostopic echo /eyrc/vb/logical_camera_2}
     modelmsg = msg.models
+    #print modelmsg
     if len(modelmsg) == 0:
         conveyor_control(70)
-        rospy.loginfo("False")
-        statuspub.publish(False)
+        #rospy.loginfo("False")
+        conv_msg.conv_status = False
+        conveyorpub.publish(conv_msg)
 
 
     if len(modelmsg) != 0:
         modelpose = msg.models[0].pose.position.y
-        pkg_id = msg.models[0].type
-        print (pkg_id)
+        pkg_type = msg.models[0]
+        print (pkg_type)
 
         if modelpose <= 0:
             conveyor_control(0)
-            if pkg_id != "ur5":
-                statuspub.publish(True)
-                modelpub.publish(pkg_id)
+            if pkg_type != "ur5":
+                conv_msg.conv_status = True
+                conv_msg.pkg_id = pkg_type
+                conveyorpub.publish(conv_msg)
     
 def main():
     rospy.init_node('conveyor_control', anonymous=True)

@@ -96,7 +96,7 @@ class Camera1:
 	def list_maker(self, qrcode, shelf_id, priority, qr_result):
 		global pkg_list
 		pkg_id = "packagen"+shelf_id
-		
+
 		pkg_dict = {
 			"priority": priority,
 			"color": qrcode.data,
@@ -105,7 +105,7 @@ class Camera1:
 		}
 
 		pkg_list.append(pkg_dict)
-		
+
 		# for task5 fix up this messed up part lmao
 		print len(pkg_list)
 		print (pkg_dict)
@@ -123,7 +123,6 @@ class Camera1:
 			# to enter the qrcode data and shelf id on the image
 			text = "{} ({})".format(qrcode.data, shelf_id)
 			cv2.putText(resized_image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-
 
 			# To draw reference boundaries to identify the shelf id
 			# vertical lines
