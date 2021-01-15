@@ -42,7 +42,7 @@ def logical_camera_clbk(msg):
 
     if len(modelmsg) != 0:
         modelpose = msg.models[0].pose.position.y
-        pkg_type = msg.models[0]
+        pkg_type = msg.models[0].type
         print (pkg_type)
 
         if modelpose <= 0:
