@@ -19,7 +19,6 @@ class Camera1:
 		self.bridge = CvBridge()
 		self.image_sub = rospy.Subscriber("/eyrc/vb/camera_1/image_raw", Image,self.callback)
 
-		rospy.get_param("pkg_details")
 	def callback(self,data):
 		try:
 			cv_image = self.bridge.imgmsg_to_cv2(data, "bgra8")

@@ -128,7 +128,9 @@ class manipulation:
             rospy.logerr("TF error")
 
     def pkg_name(self, msg):
-        self.pkg_id = msg.data
+        pkg_details = rospy.get_param("/pkg_details")
+        next((item for item in pkg_details if item["color"] == "Pam"), None)
+        #self.pkg_id = msg.data
 
     def wait_for_state_update(self, box_is_known=False, box_is_attached=False):
             box_model_name = self._object_model_name
@@ -217,7 +219,7 @@ class manipulation:
                     self.detach_box()
             while flag_plan == False:
                 break
-                
+
         if target_frame != "logical_camera_2__frame":
             ur5.go_to_pose(pkg_pose)
             self.attach_box()
