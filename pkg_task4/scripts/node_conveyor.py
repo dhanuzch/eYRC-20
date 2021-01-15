@@ -16,6 +16,7 @@ from pkg_vb_sim.srv import conveyorBeltPowerMsg
 from pkg_vb_sim.srv import conveyorBeltPowerMsgRequest
 from pkg_vb_sim.srv import conveyorBeltPowerMsgResponse
 #TODO: change msg to srv
+
 def conveyor_control(conveyor_speed):
         rospy.wait_for_service('/eyrc/vb/conveyor/set_power')
         try:
@@ -27,21 +28,15 @@ def conveyor_control(conveyor_speed):
 
 
 def logical_camera_clbk(msg):
-    conveyorpub = rospy.Publisher('eyrc/conveyor_msg', conveyor, queue_size=1)
-    conv_msg = conveyor()
 
     #get output from logical_camera_2 {rostopic echo /eyrc/vb/logical_camera_2}
     modelmsg = msg.models
-    #print modelmsg
-    if len(modelmsg) == 0:
-        conveyor_control(70)
-        #rospy.loginfo("False")
-        conv_msg.conv_status = False
-        conveyorpub.publish(conv_msg)
+    pkg_existence_check = len(modelmsg)
+    print (pkg_existence_check)
+    print (modelmsg)
 
-
-    if len(modelmsg) != 0:
-        modelpose = msg.models[0].pose.position.y
+    while pkg_existence_check != 0:
+        modelpose =     conveyor_control(70)
         pkg_type = msg.models[0].type
         print (pkg_type)
 
@@ -51,12 +46,20 @@ def logical_camera_clbk(msg):
                 conv_msg.conv_status = True
                 conv_msg.pkg_id = pkg_type
                 conveyorpub.publish(conv_msg)
+                break
     
 def main():
-    rospy.init_node('conveyor_control', anonymous=True)
-    while not rospy.is_shutdown():
-        rospy.Subscriber("/eyrc/vb/logical_camera_2", LogicalCameraImage, logical_camera_clbk)
-        rospy.spin()    
+    rospy.Subscriber("/eyrc/vb/logical_camera_2", LogicalCameraImage, logical_camera_clbk)
+    rospy.spin()
 
 if __name__ == '__main__':
+    rospy.init_node('conveyor_control', anonymous=True)
+
+    conveyorpub = rospy.Publisher('eyrc/conveyor_msg', conveyor, queue_size=1)
+    conv_msg = conveyor()
+
+    conveyor_control(70)
+    conv_msg.conv_status = False
+    conveyorpub.publish(conv_msg)
+
     main()
