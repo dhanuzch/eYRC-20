@@ -16,7 +16,6 @@ from pkg_vb_sim.srv import conveyorBeltPowerMsg
 from pkg_vb_sim.srv import conveyorBeltPowerMsgRequest
 from pkg_vb_sim.srv import conveyorBeltPowerMsgResponse
 #TODO: change msg to srv
-
 def conveyor_control(conveyor_speed):
         rospy.wait_for_service('/eyrc/vb/conveyor/set_power')
         try:
@@ -34,9 +33,15 @@ def logical_camera_clbk(msg):
     pkg_existence_check = len(modelmsg)
     print (pkg_existence_check)
     print (modelmsg)
+    """
+    if pkg_existence_check == 0:
+        rospy.loginfo("False")
+        conv_msg.conv_status = False
+        conveyorpub.publish(conv_msg)
+        """
 
-    while pkg_existence_check != 0:
-        modelpose =     conveyor_control(70)
+    if pkg_existence_check != 0:
+        modelpose = msg.models[0].pose.position.y
         pkg_type = msg.models[0].type
         print (pkg_type)
 
@@ -46,11 +51,10 @@ def logical_camera_clbk(msg):
                 conv_msg.conv_status = True
                 conv_msg.pkg_id = pkg_type
                 conveyorpub.publish(conv_msg)
-                break
     
 def main():
     rospy.Subscriber("/eyrc/vb/logical_camera_2", LogicalCameraImage, logical_camera_clbk)
-    rospy.spin()
+    rospy.spin()    
 
 if __name__ == '__main__':
     rospy.init_node('conveyor_control', anonymous=True)
