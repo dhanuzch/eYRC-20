@@ -160,10 +160,12 @@ class manipulation:
         self.pkg_id = msg.pkg_id
         conv_status = msg.conv_status
         self.arm_signal(conv_status)
+        self.pkg_name(self.pkg_id)
 
     def pkg_name(self, packagen_name):
         pkg_details = rospy.get_param("/pkg_details")
-        self.pkg_color = next((item for item in pkg_details if item["name"] == packagen_name), None)
+        pkg_dict = next((item for item in pkg_details if item["pkg_id"] == packagen_name), None)
+        self.pkg_color = (pkg_dict["color"])
         print (self.pkg_color)
         #Process and save colors in self.pkg_color or somethign
 
@@ -227,31 +229,29 @@ class manipulation:
                 ur5.go_to_pose(pkg_pose)
                 self.attach_box()
                 if self._object_model_name >= 1:
-                    self.to_bin(self.pkg_id)
+                    self.to_bin(self.pkg_color)
                     self.detach_box()
             while flag_plan == False:
                 break
-
+        """
         if target_frame != "logical_camera_2__frame":
             ur5.go_to_pose(pkg_pose)
             self.attach_box()
             while len(self._object_model_name) >=1:
-                self.to_bin(self.pkg_id)
+                self.to_bin(self.pkg_color)
                 self.detach_box()
                 break
             while len(self._object_model_name) == 0:
                 break
-                """
+        """    
         if target_frame != "logical_camera_2__frame":
             ur5.go_to_pose(pkg_pose)
             while len(self.pkg_id) >=1:
                 self.attach_box()
-
-                #process and send colors instead of pkg_id
-                self.to_bin(self.pkg_id)
+                self.to_bin(self.pkg_color)
                 self.detach_box()
                 break
-
+                """
     def ee_home(self):
         home_joint_angles = [math.radians(172.116),
                     math.radians(8.9209),
@@ -264,42 +264,42 @@ class manipulation:
 
     def attach_box(self):
         box_model_name = self._object_model_name
-
-        ur5._scene.attach_box(ur5._eef_link, box_model_name, touch_links='vacuum_gripper_link')
-        rospy.wait_for_service('/eyrc/vb/ur5_1/activate_vacuum_gripper')
+        print (box_model_name)
+        ur5._scene.attach_box(ur5._eef_link, box_model_name, touch_links="vacuum_gripper_link")
+        rospy.wait_for_service('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_2')
         try:
-            request = rospy.ServiceProxy('/eyrc/vb/ur5_1/activate_vacuum_gripper', vacuumGripper)
+            request = rospy.ServiceProxy('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_2', vacuumGripper)
             print ("Activating gripper")
             eef_req = vacuumGripperRequest(True)
             return request(eef_req)
         except rospy.ServiceException:
             rospy.logerr ("Failed to activate gripper")
-
+        
         return self.wait_for_state_update(box_is_attached=True, box_is_known=False)
 
     def detach_box(self):
         box_model_name = self._object_model_name
 
         ur5._scene.remove_attached_object(ur5._eef_link, name=box_model_name)
-        rospy.wait_for_service('/eyrc/vb/ur5_1/activate_vacuum_gripper')
+        rospy.wait_for_service('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_2')
         try:
-            request = rospy.ServiceProxy('/eyrc/vb/ur5_1/activate_vacuum_gripper', vacuumGripper)
+            request = rospy.ServiceProxy('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_2', vacuumGripper)
             print ("Deactivating gripper")
             eef_req = vacuumGripperRequest(False)
             return request(eef_req)
         except:
             rospy.logerr ("Failed to deactivate gripper")
+
         return self.wait_for_state_update(box_is_known=True, box_is_attached=False)
+    def to_bin(self, box_color):
 
-    def to_bin(self, box_id):
-
-        if box_id == "packagen1":
+        if box_color == "red":
             self.joint_angle_set(80) #red bin join tangle shldr_pan
 
-        if box_id == "packagen2":
+        if box_color == "yellow":
             self.joint_angle_set(0) #green bin join tangle shldr_pan
 
-        if box_id == "packagen3":
+        if box_color == "green":
             self.joint_angle_set(-90) #blue bin join tangle shldr_pan
 
     def joint_angle_set(self, joint1):
@@ -318,7 +318,7 @@ def main():
 
         #rospy.Subscriber("/eyrc/armsignal", Bool, Manipulation.arm_signal)
         #rospy.Subscriber("eyrc/pkgid", String, Manipulation.pkg_name)
-        rospy.Subscriber("eyrc/vb/ur5_1/vacuum_gripper/logical_camera/ur5_1", LogicalCameraImage, Manipulation.ur5_camera_clbk)
+        rospy.Subscriber("eyrc/vb/ur5_1/vacuum_gripper/logical_camera/ur5_2", LogicalCameraImage, Manipulation.ur5_camera_clbk)
         rospy.spin()    
 
 if __name__ == '__main__':
