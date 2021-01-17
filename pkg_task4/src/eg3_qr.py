@@ -130,7 +130,6 @@ class Camera1:
 			cv2.line(resized_image, (0,370), (400,370), (255,255,255), 2)
 			cv2.line(resized_image, (0,450), (400,450), (255,255,255), 2)
 
-			#TODO: change these values into the actual values
 			infotext1 = "no. of qrcodes: {}".format(len(qr_result))
 			infotext2 = "SHELF IDs"
 			infotext3 = "high Priority: {}".format(len(qr_result)) #this

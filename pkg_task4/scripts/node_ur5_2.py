@@ -14,6 +14,7 @@ import tf2_ros
 import tf2_msgs.msg
 
 from std_msgs.msg import Bool, String
+from pkg_task4.msg import conveyor
 
 from pkg_vb_sim.msg import LogicalCameraImage
 
@@ -38,6 +39,8 @@ class CartesianPath:
         self._display_trajectory_publisher = rospy.Publisher( self._robot_ns + '/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=1)
         self._exectute_trajectory_client = actionlib.SimpleActionClient( self._robot_ns + '/execute_trajectory', moveit_msgs.msg.ExecuteTrajectoryAction)
         self._exectute_trajectory_client.wait_for_server()
+
+        self._group.set_planning_time(99)
 
         self._planning_frame = self._group.get_planning_frame()
         self._eef_link = self._group.get_end_effector_link()
@@ -94,12 +97,12 @@ class CartesianPath:
 
 class manipulation:
     def __init__(self):
-        param_config_vacuum_gripper = rospy.get_param('config_vacuum_gripper')
+        param_config_vacuum_gripper = rospy.get_param('config_vacuum_gripper_ur5_2')
         
         self._vacuum_gripper_model_name = param_config_vacuum_gripper['vacuum_gripper_model_name']
         self._vacuum_gripper_link_name = param_config_vacuum_gripper['vacuum_gripper_link_name']
         
-        #self._object_model_name = ""
+        self._object_model_name = ""
         self._object_link_name = param_config_vacuum_gripper['attachable_object_link_name']
         
         self._attachable_object_prefix = param_config_vacuum_gripper['attachable_object_prefix']
@@ -110,6 +113,8 @@ class manipulation:
         self._listener = tf2_ros.TransformListener(self._tfBuffer)
 
         self.pkg_id = ""
+        self.pkg_color = ""
+
     def func_tf(self, arg_frame_1, arg_frame_2):
         try:
             trans = self._tfBuffer.lookup_transform(arg_frame_1, arg_frame_2, rospy.Time())
@@ -127,10 +132,6 @@ class manipulation:
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rospy.logerr("TF error")
 
-    def pkg_name(self, msg):
-        pkg_details = rospy.get_param("/pkg_details")
-        next((item for item in pkg_details if item["name"] == "Pam"), None)
-        #self.pkg_id = msg.data
 
     def wait_for_state_update(self, box_is_known=False, box_is_attached=False):
             box_model_name = self._object_model_name
@@ -154,13 +155,23 @@ class manipulation:
 
             # If we exited the while loop without returning then we timed out
             return False
+    def conveyor_msg(self, msg):
 
-    def arm_signal(self, msg):
-        #TODO: add status.data and proceed signal from ee_move == false
-        print msg
-        if status.data == True:
+        self.pkg_id = msg.pkg_id
+        conv_status = msg.conv_status
+        self.arm_signal(conv_status)
+
+    def pkg_name(self, packagen_name):
+        pkg_details = rospy.get_param("/pkg_details")
+        self.pkg_color = next((item for item in pkg_details if item["name"] == packagen_name), None)
+        print (self.pkg_color)
+        #Process and save colors in self.pkg_color or somethign
+
+
+    def arm_signal(self, conv_status):
+        if conv_status == False:
             self.ee_move()
-        if status.data == False:
+        if conv_status == True:
             print ("nothing is happening lol")
 
     def ur5_camera_clbk(self, pkg_type):
@@ -235,6 +246,8 @@ class manipulation:
             ur5.go_to_pose(pkg_pose)
             while len(self.pkg_id) >=1:
                 self.attach_box()
+
+                #process and send colors instead of pkg_id
                 self.to_bin(self.pkg_id)
                 self.detach_box()
                 break
@@ -301,8 +314,7 @@ class manipulation:
 
 def main():
     while not rospy.is_shutdown():
-        #TODO: convert these two things to one
-        rospy.Subscriber("/eyrc/conveyor_msg", conveyor, Manipulation.arm_signal)
+        rospy.Subscriber("/eyrc/conveyor_msg", conveyor, Manipulation.conveyor_msg)
 
         #rospy.Subscriber("/eyrc/armsignal", Bool, Manipulation.arm_signal)
         #rospy.Subscriber("eyrc/pkgid", String, Manipulation.pkg_name)
