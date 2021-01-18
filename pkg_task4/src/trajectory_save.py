@@ -41,6 +41,7 @@ class Ur5Moveit:
         self._group_names = self._robot.get_group_names()
         self._box_name = ''
 
+        self._group.set_planning_time(99)
 
         # Attribute to store computed trajectory by the planner	
         self._computed_plan = ''
@@ -206,17 +207,17 @@ class Ur5Moveit:
         box_pose30.header.frame_id = self._planning_frame
         box_pose30.pose.position.x = 0.28
         box_pose30.pose.position.y = -0.41
-        box_pose30.pose.position.z = 1.20 
+        box_pose30.pose.position.z = 1.197 
         box_pose31 = geometry_msgs.msg.PoseStamped()
         box_pose31.header.frame_id = self._planning_frame
         box_pose31.pose.position.x = 0.0
         box_pose31.pose.position.y = -0.41
-        box_pose31.pose.position.z = 1.20 
+        box_pose31.pose.position.z = 1.197
         box_pose32 = geometry_msgs.msg.PoseStamped()
         box_pose32.header.frame_id = self._planning_frame
         box_pose32.pose.position.x = -0.28
         box_pose32.pose.position.y = -0.41
-        box_pose32.pose.position.z = 1.20 
+        box_pose32.pose.position.z = 1.197
         
      
         scene.add_box("packagen00", box_pose00, size=(0.15, 0.15, 0.15))
@@ -247,7 +248,7 @@ class Ur5Moveit:
 def main():
     ur5 = Ur5Moveit(sys.argv[1])
     ur5.add_box()
-    
+
     box_name00 = "packagen00"
     box_name01 = "packagen01"
     box_name02 = "packagen02"
@@ -332,12 +333,12 @@ def main():
                           math.radians(122),
                           math.radians(102)]
 
-    lst_joint_angles_30 = [math.radians(-54),
-                          math.radians(-70),
-                          math.radians(130),
+    lst_joint_angles_30 = [math.radians(-55),
+                          math.radians(-95),
                           math.radians(119),
-                          math.radians(-128),
-                          math.radians(102)]
+                          math.radians(-26),
+                          math.radians(126),
+                          math.radians(-79)]
 
     lst_joint_angles_31 = [math.radians(-125),
                           math.radians(-119),
@@ -346,12 +347,12 @@ def main():
                           math.radians(57),
                           math.radians(-77)]
 
-    lst_joint_angles_32 = [math.radians(54),
-                          math.radians(-114),
-                          math.radians(-130),
-                          math.radians(64),
-                          math.radians(124),
-                          math.radians(103)]
+    lst_joint_angles_32 = [math.radians(56),
+                          math.radians(-106),
+                          math.radians(-132),
+                          math.radians(57),
+                          math.radians(123),
+                          math.radians(105)]
 
     # 1-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_00, 5)
@@ -604,7 +605,7 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
-
+    """
     # 19-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_30, 5)
     ur5.attach_box(box_name30)
@@ -688,9 +689,9 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
+    """
 
     del ur5
-
 
 if __name__ == '__main__':
     rospy.init_node('node_moveit_eg6', anonymous=True)

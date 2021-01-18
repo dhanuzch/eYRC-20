@@ -277,116 +277,117 @@ def main():
     ur5 = Ur5Moveit()
     ur5.add_box()
     
-    while not rospy.is_shutdown():
 
-        rospy.logwarn("1")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '1_ze00.yaml', 5)
-        box_name00 = "packagen00"
-        ur5.attach_box(box_name00)
-
-
-        rospy.logwarn("2")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '2_00co.yaml', 5)
-        ur5.detach_box(box_name00)
-        ur5.remove_box(box_name00)
+    rospy.logwarn("1")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '1_ze00.yaml', 5)
+    box_name00 = "packagen00"
+    ur5.attach_box(box_name00)
 
 
-        rospy.logwarn("3")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '3_co01.yaml', 5)
-        box_name01 = "packagen01"
-        ur5.attach_box(box_name01)
+    rospy.logwarn("2")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '2_00co.yaml', 5)
+    ur5.detach_box(box_name00)
+    ur5.remove_box(box_name00)
 
 
-        rospy.logwarn("4")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '4_01co.yaml', 5)
-        ur5.detach_box(box_name01)
-        ur5.remove_box(box_name01)
+    rospy.logwarn("3")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '3_co01.yaml', 5)
+    box_name01 = "packagen01"
+    ur5.attach_box(box_name01)
 
 
-        rospy.logwarn("5")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '5_co02.yaml', 5)
-        box_name02 = "packagen02"
-        ur5.attach_box(box_name02)
-
-        
-        rospy.logwarn("6")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '6_02co.yaml', 5)
-        ur5.detach_box(box_name02)
-        ur5.remove_box(box_name02)
+    rospy.logwarn("4")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '4_01co.yaml', 5)
+    ur5.detach_box(box_name01)
+    ur5.remove_box(box_name01)
 
 
-        rospy.logwarn("7")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '7_co10.yaml', 5)
-        box_name10 = "packagen10"
-        ur5.attach_box(box_name10)
+    rospy.logwarn("5")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '5_co02.yaml', 5)
+    box_name02 = "packagen02"
+    ur5.attach_box(box_name02)
+
+    
+    rospy.logwarn("6")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '6_02co.yaml', 5)
+    ur5.detach_box(box_name02)
+    ur5.remove_box(box_name02)
 
 
-        rospy.logwarn("8")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '8_10co.yaml', 5)
-        ur5.detach_box(box_name10)
-        ur5.remove_box(box_name10)
+    rospy.logwarn("7")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '7_co10.yaml', 5)
+    box_name10 = "packagen10"
+    ur5.attach_box(box_name10)
 
 
-        rospy.logwarn("9")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '9_co11.yaml', 5)
-        box_name11 = "packagen11"
-        ur5.attach_box(box_name11)
-
-        
-        rospy.logwarn("10")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '10_11co.yaml', 5)
-        ur5.detach_box(box_name11)
-        ur5.remove_box(box_name11)
+    rospy.logwarn("8")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '8_10co.yaml', 5)
+    ur5.detach_box(box_name10)
+    ur5.remove_box(box_name10)
 
 
-        rospy.logwarn("11")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '11_co12.yaml', 5)
-        box_name12 = "packagen12"
-        ur5.attach_box(box_name12)
+    rospy.logwarn("9")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '9_co11.yaml', 5)
+    box_name11 = "packagen11"
+    ur5.attach_box(box_name11)
+
+    
+    rospy.logwarn("10")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '10_11co.yaml', 5)
+    ur5.detach_box(box_name11)
+    ur5.remove_box(box_name11)
 
 
-        rospy.logwarn("12")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '12_12co.yaml', 5)
-        ur5.detach_box(box_name12)
-        ur5.remove_box(box_name12)
+    rospy.logwarn("11")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '11_co12.yaml', 5)
+    box_name12 = "packagen12"
+    ur5.attach_box(box_name12)
 
 
-        rospy.logwarn("13")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '13_co20.yaml', 5)
-        box_name20 = "packagen20"
-        ur5.attach_box(box_name20)
-
-        
-        rospy.logwarn("14")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '14_20co.yaml', 5)
-        ur5.detach_box(box_name20)
-        ur5.remove_box(box_name20)
+    rospy.logwarn("12")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '12_12co.yaml', 5)
+    ur5.detach_box(box_name12)
+    ur5.remove_box(box_name12)
 
 
-        rospy.logwarn("15")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '15_co21.yaml', 5)
-        box_name21 = "packagen21"
-        ur5.attach_box(box_name21)
+    rospy.logwarn("13")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '13_co20.yaml', 5)
+    box_name20 = "packagen20"
+    ur5.attach_box(box_name20)
+
+    
+    rospy.logwarn("14")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '14_20co.yaml', 5)
+    ur5.detach_box(box_name20)
+    ur5.remove_box(box_name20)
 
 
-        rospy.logwarn("16")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '16_21co.yaml', 5)
-        ur5.detach_box(box_name21)
-        ur5.remove_box(box_name21)
+    rospy.logwarn("15")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '15_co21.yaml', 5)
+    box_name21 = "packagen21"
+    ur5.attach_box(box_name21)
 
 
-        rospy.logwarn("17")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '17_co22.yaml', 5)
-        box_name22 = "packagen22"
-        ur5.attach_box(box_name22)
-
-        
-        rospy.logwarn("18")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '18_22co.yaml', 5)
-        ur5.detach_box(box_name22)
-        ur5.remove_box(box_name22)
+    rospy.logwarn("16")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '16_21co.yaml', 5)
+    ur5.detach_box(box_name21)
+    ur5.remove_box(box_name21)
 
 
+    rospy.logwarn("17")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '17_co22.yaml', 5)
+    box_name22 = "packagen22"
+    ur5.attach_box(box_name22)
+
+    
+    rospy.logwarn("18")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '18_22co.yaml', 5)
+    ur5.detach_box(box_name22)
+    ur5.remove_box(box_name22)
+
+    del ur5
+
+    """
         rospy.logwarn("19")
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '19_co30.yaml', 5)
         box_name30 = "packagen30"
@@ -421,11 +422,7 @@ def main():
         ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '24_32co.yaml', 5)
         ur5.detach_box(box_name32)
         ur5.remove_box(box_name32)
-
-
-    del ur5
-
-
+        """
 
 if __name__ == '__main__':
     rospy.init_node('node_ur5_1', anonymous=True)
