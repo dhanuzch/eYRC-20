@@ -385,44 +385,45 @@ def main():
     ur5.detach_box(box_name22)
     ur5.remove_box(box_name22)
 
-    del ur5
 
-    """
-        rospy.logwarn("19")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '19_co30.yaml', 5)
-        box_name30 = "packagen30"
-        ur5.attach_box(box_name30)
+    rospy.logwarn("19")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '19_co30.yaml', 5)
+    box_name30 = "packagen30"
+    ur5.attach_box(box_name30)
 
 
-        rospy.logwarn("20")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '20_30co.yaml', 5)
-        ur5.detach_box(box_name30)
-        ur5.remove_box(box_name30)
+    rospy.logwarn("20")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '20_30co.yaml', 5)
+    ur5.detach_box(box_name30)
+    ur5.remove_box(box_name30)
 
 
-        rospy.logwarn("21")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '21_co31.yaml', 5)
-        box_name31 = "packagen31"
-        ur5.attach_box(box_name31)
+    rospy.logwarn("21")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '21_co31.yaml', 5)
+    box_name31 = "packagen31"
+    ur5.attach_box(box_name31)
 
-        
-        rospy.logwarn("22")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '22_31co.yaml', 5)
-        ur5.detach_box(box_name31)
-        ur5.remove_box(box_name31)
-
-
-        rospy.logwarn("23")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '23_co32.yaml', 5)
-        box_name32 = "packagen32"
-        ur5.attach_box(box_name32)
+    
+    rospy.logwarn("22")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '22_31co.yaml', 5)
+    ur5.detach_box(box_name31)
+    ur5.remove_box(box_name31)
 
 
-        rospy.logwarn("24")
-        ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '24_32co.yaml', 5)
-        ur5.detach_box(box_name32)
-        ur5.remove_box(box_name32)
-        """
+    rospy.logwarn("23")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '23_co32.yaml', 5)
+    box_name32 = "packagen32"
+    ur5.attach_box(box_name32)
+
+
+    rospy.logwarn("24")
+    ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '24_32co.yaml', 5)
+    ur5.detach_box(box_name32)
+    ur5.remove_box(box_name32)
+
+    rospy.spin()
+
+    
 
 if __name__ == '__main__':
     rospy.init_node('node_ur5_1', anonymous=True)

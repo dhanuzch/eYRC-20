@@ -149,11 +149,29 @@ class Ur5Moveit:
 
     def attach_box(self, box_name):
         self._scene.attach_box(self._eef_link, box_name, touch_links='vacuum_gripper_link')
-        return self.wait_for_state_update(box_is_attached=True, box_is_known=True, timeout=4)
+        rospy.wait_for_service('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1')
+        try:
+            request = rospy.ServiceProxy('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1', vacuumGripper)
+            print ("Activating gripper")
+            eef_req = vacuumGripperRequest(True)
+            return request(eef_req)
+        except rospy.ServiceException:
+            rospy.logerr ("Failed to activate gripper")
+
+        return self.wait_for_state_update(box_is_attached=True, box_is_known=False)
 
     def detach_box(self, box_name):
         self._scene.remove_attached_object(self._eef_link, name=box_name)
-        return self.wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4)
+        rospy.wait_for_service('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1')
+        try:
+            request = rospy.ServiceProxy('/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1', vacuumGripper)
+            print ("***Deactivating gripper***")
+            eef_req = vacuumGripperRequest(False)
+            return request(eef_req)
+        except:
+            return 0
+            
+        return self.wait_for_state_update(box_is_known=True, box_is_attached=False)
 
     def add_box(self):
         scene = self._scene
@@ -177,17 +195,17 @@ class Ur5Moveit:
         box_pose10.header.frame_id = self._planning_frame
         box_pose10.pose.position.x = 0.28
         box_pose10.pose.position.y = -0.41
-        box_pose10.pose.position.z = 1.65
+        box_pose10.pose.position.z = 1.64
         box_pose11 = geometry_msgs.msg.PoseStamped()
         box_pose11.header.frame_id = self._planning_frame
         box_pose11.pose.position.x = 0.0
         box_pose11.pose.position.y = -0.41
-        box_pose11.pose.position.z = 1.65  
+        box_pose11.pose.position.z = 1.64  
         box_pose12 = geometry_msgs.msg.PoseStamped()
         box_pose12.header.frame_id = self._planning_frame
         box_pose12.pose.position.x = -0.28
         box_pose12.pose.position.y = -0.41
-        box_pose12.pose.position.z = 1.65  
+        box_pose12.pose.position.z = 1.64 
         box_pose20 = geometry_msgs.msg.PoseStamped()
         box_pose20.header.frame_id = self._planning_frame
         box_pose20.pose.position.x = 0.28
@@ -197,12 +215,12 @@ class Ur5Moveit:
         box_pose21.header.frame_id = self._planning_frame
         box_pose21.pose.position.x = 0.0
         box_pose21.pose.position.y = -0.41
-        box_pose21.pose.position.z = 1.43 
+        box_pose21.pose.position.z = 1.42
         box_pose22 = geometry_msgs.msg.PoseStamped()
         box_pose22.header.frame_id = self._planning_frame
         box_pose22.pose.position.x = -0.28
         box_pose22.pose.position.y = -0.41
-        box_pose22.pose.position.z = 1.43
+        box_pose22.pose.position.z = 1.42
         box_pose30 = geometry_msgs.msg.PoseStamped()
         box_pose30.header.frame_id = self._planning_frame
         box_pose30.pose.position.x = 0.28
@@ -605,7 +623,7 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
-    """
+
     # 19-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_30, 5)
     ur5.attach_box(box_name30)
@@ -689,7 +707,6 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
-    """
 
     del ur5
 

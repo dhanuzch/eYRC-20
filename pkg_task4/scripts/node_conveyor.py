@@ -36,11 +36,11 @@ class conveyor_class():
 
         if pkg_existence_check == 0:
             #print "no package under logical camera"
-            #self.conveyor_control(70)
+            self.conveyor_control(70)
             conv_msg.conv_status = True
             self.conveyorpub.publish(conv_msg)
 
-        else:
+        if pkg_existence_check != 0:
             modelpose = msg.models[0].pose.position.y
             pkg_type = msg.models[0].type
 

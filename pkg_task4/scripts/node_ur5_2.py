@@ -97,6 +97,18 @@ class CartesianPath:
 
 class manipulation:
     def __init__(self):
+        param_config_vacuum_gripper = rospy.get_param('config_vacuum_gripper_ur5_2')
+        
+        self._vacuum_gripper_model_name = param_config_vacuum_gripper['vacuum_gripper_model_name']
+        self._vacuum_gripper_link_name = param_config_vacuum_gripper['vacuum_gripper_link_name']
+        
+        #self._object_model_name = ""
+        self._object_link_name = param_config_vacuum_gripper['attachable_object_link_name']
+        
+        self._attachable_object_prefix = param_config_vacuum_gripper['attachable_object_prefix']
+        self._attachable_object_delimiter = param_config_vacuum_gripper['attachable_object_delimiter']
+        self._logical_camera_topic_name = param_config_vacuum_gripper['logical_camera_topic_name']
+
         self._tfBuffer = tf2_ros.Buffer()
         self._listener = tf2_ros.TransformListener(self._tfBuffer)
 
@@ -122,12 +134,12 @@ class manipulation:
 
 
     def wait_for_state_update(self, box_is_known=False, box_is_attached=False):
-            box_model_name = self._object_model_name
+            box_model_name = self.pkg_id
             scene = ur5._scene
 
             start = rospy.get_time()
             seconds = rospy.get_time()
-            while (seconds - start < 0.1) and not rospy.is_shutdown():
+            while (seconds - start < 1) and not rospy.is_shutdown():
                 attached_objects = scene.get_attached_objects([box_model_name])
                 self.is_attached = len(attached_objects.keys()) > 0
 
@@ -157,12 +169,24 @@ class manipulation:
         print (self.pkg_color)
         #Process and save colors in self.pkg_color or somethign
 
-
     def arm_signal(self, conv_status):
         if conv_status == False:
             self.ee_move()
         if conv_status == True:
             print ("nothing is happening lol")
+
+    def ur5_camera_clbk(self, pkg_type):
+        number_models = len(pkg_type.models)
+
+        for i in range(0, number_models):
+            name_model = pkg_type.models[i].type
+            
+            lst_name_model = name_model.split(self._attachable_object_delimiter)
+            
+            if(lst_name_model[0] == self._attachable_object_prefix):
+                #rospy.loginfo( '\033[94m' + " Package name: {}".format(name_model) + '\033[0m')
+                self._object_model_name = name_model
+                break
 
     def ee_move(self):
         camera_name = "logical_camera_2_"
@@ -203,20 +227,19 @@ class manipulation:
             while flag_plan == True:
                 ur5.go_to_pose(pkg_pose)
                 self.attach_box()
-                if self._object_model_name >= 1:
+                if self.pkg_id >= 1:
                     self.to_bin(self.pkg_color)
                     self.detach_box()
             while flag_plan == False:
                 break
-        """
         if target_frame != "logical_camera_2__frame":
             ur5.go_to_pose(pkg_pose)
             self.attach_box()
-            while len(self._object_model_name) >=1:
+            while len(self.pkg_id) >=1:
                 self.to_bin(self.pkg_color)
                 self.detach_box()
                 break
-            while len(self._object_model_name) == 0:
+            while len(self.pkg_id) == 0:
                 break
         """    
         if target_frame != "logical_camera_2__frame":
@@ -226,7 +249,7 @@ class manipulation:
                 self.to_bin(self.pkg_color)
                 self.detach_box()
                 break
-                """
+
     def ee_home(self):
         home_joint_angles = [math.radians(172.116),
                     math.radians(8.9209),
@@ -293,6 +316,8 @@ def main():
 
         #rospy.Subscriber("/eyrc/armsignal", Bool, Manipulation.arm_signal)
         #rospy.Subscriber("eyrc/pkgid", String, Manipulation.pkg_name)
+        rospy.Subscriber("eyrc/vb/ur5_1/vacuum_gripper/logical_camera/ur5_1", LogicalCameraImage, Manipulation.ur5_camera_clbk)
+
         rospy.spin()    
 
 if __name__ == '__main__':
@@ -300,3 +325,4 @@ if __name__ == '__main__':
     Manipulation = manipulation()
     ur5 = CartesianPath()
     main()
+
