@@ -185,7 +185,7 @@ class manipulation:
             
             if(lst_name_model[0] == self._attachable_object_prefix):
                 #rospy.loginfo( '\033[94m' + " Package name: {}".format(name_model) + '\033[0m')
-                self._object_model_name = name_model
+                self.pkg_id = name_model
                 break
 
     def ee_move(self):

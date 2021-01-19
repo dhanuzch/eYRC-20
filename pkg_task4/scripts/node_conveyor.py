@@ -53,7 +53,7 @@ class conveyor_class():
                     self.conveyorpub.publish(conv_msg)
 
 def main():
-    rospy.init_node('conveyor_control', anonymous=True)
+    rospy.init_node('node_conveyor_control', anonymous=True)
     conveyor = conveyor_class()
 
     rospy.Subscriber("/eyrc/vb/logical_camera_2", LogicalCameraImage, conveyor.logical_camera_clbk)
