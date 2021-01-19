@@ -59,7 +59,7 @@ class Ur5Moveit:
 
         rp = rospkg.RosPack()
         self._pkg_path = rp.get_path('pkg_task4')
-        self._file_path = self._pkg_path + '/config/saved_trajectories/'
+        self._file_path = self._pkg_path + '/config/saved_trajectories_final/'
         rospy.loginfo( "Package Path: {}".format(self._file_path) )
 
 
@@ -162,62 +162,62 @@ class Ur5Moveit:
         box_pose00.header.frame_id = self._planning_frame
         box_pose00.pose.position.x = 0.28
         box_pose00.pose.position.y = -0.41
-        box_pose00.pose.position.z = 1.90  
+        box_pose00.pose.position.z = 1.92 
         box_pose01 = geometry_msgs.msg.PoseStamped()
         box_pose01.header.frame_id = self._planning_frame
         box_pose01.pose.position.x = 0
         box_pose01.pose.position.y = -0.41
-        box_pose01.pose.position.z = 1.90  
+        box_pose01.pose.position.z = 1.92  
         box_pose02 = geometry_msgs.msg.PoseStamped()
         box_pose02.header.frame_id = self._planning_frame
         box_pose02.pose.position.x = -0.28
         box_pose02.pose.position.y = -0.41
-        box_pose02.pose.position.z = 1.90  
+        box_pose02.pose.position.z = 1.92  
         box_pose10 = geometry_msgs.msg.PoseStamped()
         box_pose10.header.frame_id = self._planning_frame
         box_pose10.pose.position.x = 0.28
         box_pose10.pose.position.y = -0.41
-        box_pose10.pose.position.z = 1.64 
+        box_pose10.pose.position.z = 1.65
         box_pose11 = geometry_msgs.msg.PoseStamped()
         box_pose11.header.frame_id = self._planning_frame
         box_pose11.pose.position.x = 0.0
         box_pose11.pose.position.y = -0.41
-        box_pose11.pose.position.z = 1.64  
+        box_pose11.pose.position.z = 1.65  
         box_pose12 = geometry_msgs.msg.PoseStamped()
         box_pose12.header.frame_id = self._planning_frame
         box_pose12.pose.position.x = -0.28
         box_pose12.pose.position.y = -0.41
-        box_pose12.pose.position.z = 1.64  
+        box_pose12.pose.position.z = 1.65 
         box_pose20 = geometry_msgs.msg.PoseStamped()
         box_pose20.header.frame_id = self._planning_frame
         box_pose20.pose.position.x = 0.28
         box_pose20.pose.position.y = -0.41
-        box_pose20.pose.position.z = 1.42  
+        box_pose20.pose.position.z = 1.43  
         box_pose21 = geometry_msgs.msg.PoseStamped()
         box_pose21.header.frame_id = self._planning_frame
         box_pose21.pose.position.x = 0.0
         box_pose21.pose.position.y = -0.41
-        box_pose21.pose.position.z = 1.42  
+        box_pose21.pose.position.z = 1.43
         box_pose22 = geometry_msgs.msg.PoseStamped()
         box_pose22.header.frame_id = self._planning_frame
         box_pose22.pose.position.x = -0.28
         box_pose22.pose.position.y = -0.41
-        box_pose22.pose.position.z = 1.42 
+        box_pose22.pose.position.z = 1.43
         box_pose30 = geometry_msgs.msg.PoseStamped()
         box_pose30.header.frame_id = self._planning_frame
         box_pose30.pose.position.x = 0.28
         box_pose30.pose.position.y = -0.41
-        box_pose30.pose.position.z = 1.19 
+        box_pose30.pose.position.z = 1.197 
         box_pose31 = geometry_msgs.msg.PoseStamped()
         box_pose31.header.frame_id = self._planning_frame
         box_pose31.pose.position.x = 0.0
         box_pose31.pose.position.y = -0.41
-        box_pose31.pose.position.z = 1.19  
+        box_pose31.pose.position.z = 1.197
         box_pose32 = geometry_msgs.msg.PoseStamped()
         box_pose32.header.frame_id = self._planning_frame
         box_pose32.pose.position.x = -0.28
         box_pose32.pose.position.y = -0.41
-        box_pose32.pose.position.z = 1.19  
+        box_pose32.pose.position.z = 1.197
         
      
         scene.add_box("packagen00", box_pose00, size=(0.15, 0.15, 0.15))
@@ -289,7 +289,6 @@ def main():
     ur5.detach_box(box_name00)
     ur5.remove_box(box_name00)
 
-
     rospy.logwarn("3")
     ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '3_co01.yaml', 5)
     box_name01 = "packagen01"
@@ -348,7 +347,6 @@ def main():
     ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '12_12co.yaml', 5)
     ur5.detach_box(box_name12)
     ur5.remove_box(box_name12)
-
 
     rospy.logwarn("13")
     ur5.moveit_hard_play_planned_path_from_file(ur5._file_path, '13_co20.yaml', 5)

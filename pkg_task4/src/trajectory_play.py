@@ -55,8 +55,8 @@ class Ur5Moveit:
 
 
         rp = rospkg.RosPack()
-        self._pkg_path = rp.get_path('pkg_moveit_examples')
-        self._file_path = self._pkg_path + '/config/saved_trajectories/'
+        self._pkg_path = rp.get_path('pkg_task4')
+        self._file_path = self._pkg_path + '/config/saved_trajectories_final/'
         rospy.loginfo( "Package Path: {}".format(self._file_path) )
 
 

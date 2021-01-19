@@ -195,32 +195,32 @@ class Ur5Moveit:
         box_pose10.header.frame_id = self._planning_frame
         box_pose10.pose.position.x = 0.28
         box_pose10.pose.position.y = -0.41
-        box_pose10.pose.position.z = 1.64
+        box_pose10.pose.position.z = 1.65
         box_pose11 = geometry_msgs.msg.PoseStamped()
         box_pose11.header.frame_id = self._planning_frame
         box_pose11.pose.position.x = 0.0
         box_pose11.pose.position.y = -0.41
-        box_pose11.pose.position.z = 1.64  
+        box_pose11.pose.position.z = 1.65  
         box_pose12 = geometry_msgs.msg.PoseStamped()
         box_pose12.header.frame_id = self._planning_frame
         box_pose12.pose.position.x = -0.28
         box_pose12.pose.position.y = -0.41
-        box_pose12.pose.position.z = 1.64 
+        box_pose12.pose.position.z = 1.65 
         box_pose20 = geometry_msgs.msg.PoseStamped()
         box_pose20.header.frame_id = self._planning_frame
         box_pose20.pose.position.x = 0.28
         box_pose20.pose.position.y = -0.41
-        box_pose20.pose.position.z = 1.42  
+        box_pose20.pose.position.z = 1.43  
         box_pose21 = geometry_msgs.msg.PoseStamped()
         box_pose21.header.frame_id = self._planning_frame
         box_pose21.pose.position.x = 0.0
         box_pose21.pose.position.y = -0.41
-        box_pose21.pose.position.z = 1.42
+        box_pose21.pose.position.z = 1.43
         box_pose22 = geometry_msgs.msg.PoseStamped()
         box_pose22.header.frame_id = self._planning_frame
         box_pose22.pose.position.x = -0.28
         box_pose22.pose.position.y = -0.41
-        box_pose22.pose.position.z = 1.42
+        box_pose22.pose.position.z = 1.43
         box_pose30 = geometry_msgs.msg.PoseStamped()
         box_pose30.header.frame_id = self._planning_frame
         box_pose30.pose.position.x = 0.28
@@ -337,12 +337,12 @@ def main():
                           math.radians(128),
                           math.radians(-79)]
 
-    lst_joint_angles_21 = [math.radians(-122),
-                          math.radians(-120),
-                          math.radians(104),
-                          math.radians(15),
-                          math.radians(60),
-                          math.radians(-78)]
+    lst_joint_angles_21 = [math.radians(122),
+                          math.radians(-62),
+                          math.radians(-104),
+                          math.radians(166),
+                          math.radians(-56),
+                          math.radians(-97)]
 
     lst_joint_angles_22 = [math.radians(56),
                           math.radians(-85),
@@ -428,6 +428,7 @@ def main():
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
 
+    """
     # 5-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_02, 5)
     ur5.attach_box(box_name02)
@@ -455,6 +456,7 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
+    """
 
     # 7-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_10, 5)
@@ -483,7 +485,7 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
-
+    """
     # 9-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_11, 5)
     ur5.attach_box(box_name11)
@@ -539,7 +541,7 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
-
+    """
     # 13-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_20, 5)
     ur5.attach_box(box_name20)
@@ -595,7 +597,7 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
-
+    """
     # 17-------------------------------------------------------------------------
     ur5.hard_set_joint_angles(lst_joint_angles_22, 5)
     ur5.attach_box(box_name22)
@@ -707,7 +709,8 @@ def main():
     
     rospy.loginfo( "File saved at: {}".format(file_path) )
     rospy.sleep(2)
-
+    """
+    
     del ur5
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@
 <node name= "node_eg3_qr_decode" pkg= "pkg_task4" type="node_qr.py" output="screen" required = "true" launch-prefix="bash -c 'sleep $(arg node_start_delay1); $0 $@' "/> -->
 
 <!-- This node is to start node_conveyor, which controls conveyor and sends logical camera's output 
-<node name= "node_ur5_1" pkg= "pkg_task4" type="node_ur5_1.py" output="screen" required = "true" launch-prefix="bash -c 'sleep $(arg node_start_delay2); $0 $@' "/> -->
+<node name= "node_ur5_1" pkg= "pkg_task4" type="node_ur5_1.py" output="screen" required = "true" launch-prefix="bash -c 'sleep $(arg node_start_delay2); $0 $@' "/>  -->
 
 <!-- Recording Bag File for Submission -->
     <arg name="record" default="false"/>
