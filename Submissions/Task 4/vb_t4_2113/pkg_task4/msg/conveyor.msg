@@ -1,0 +1,2 @@
+bool conv_status
+string pkg_id

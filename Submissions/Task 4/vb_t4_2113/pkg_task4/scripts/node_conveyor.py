@@ -43,8 +43,8 @@ class conveyor_class():
         if pkg_existence_check != 0:
             modelpose = msg.models[0].pose.position.y
             pkg_type = msg.models[0].type
-            if pkg_type != "ur5_2" and pkg_type != "ur5":                       
-                if modelpose <= 0:
+            if modelpose <= 0:
+                if pkg_type != "ur5_2" and pkg_type != "ur5":                       
                     self.conveyor_control(0)
                     print (pkg_type)
                     conv_msg.conv_status = False
