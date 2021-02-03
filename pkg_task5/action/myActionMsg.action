@@ -1,9 +1,0 @@
-# goal
-int8 priority
----
-# result
-string final_status
----
-# feedback
-string current_status
-
