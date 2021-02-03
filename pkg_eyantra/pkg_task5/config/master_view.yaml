@@ -1,0 +1,9 @@
+master_view:
+  ur5_1_status: "ready"
+  ur5_2_status: "ready"
+  ur5_1_gripper: "notActive"
+  ur5_2_gripper:  "notActive"
+  lo_cam_1: "nopkg"
+  lo_cam_2: "nopkg"
+  lo_cam_1_pkg_name: "nil"
+  lo_cam_2_pkg_name: "nil"
